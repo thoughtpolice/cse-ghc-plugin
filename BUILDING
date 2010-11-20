@@ -1,0 +1,15 @@
+To build and install the actual plugin:
+
+runhaskell Setup.hs configure
+runhaskell Setup.hs build
+sudo runhaskell Setup.hs install
+
+Once you've done that, you can if you wish run the tests:
+
+cd tests
+ghc --make -plg CSE.Plugin -O0 Traced.hs
+./Traced
+
+To use the plugin on any module you compile with GHC, use the -plgCSE.Plugin option, or include it in an OPTIONS_GHC pragma, like so:
+
+{-# OPTIONS_GHC -plgCSE.Plugin #-}
