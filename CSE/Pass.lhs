@@ -249,9 +249,9 @@ cseAlts env scrut' bndr bndr' alts
 
 \begin{code}
 -- | All the data needed to make the CSE pass tick
-data CSEnv = CS CSEMap          -- ^ Expression mapping
-                InScopeSet      -- ^ Variables that are in scope, to detect shadowing
-                (IdEnv Id)      -- ^ Variable substitutions to apply
+data CSEnv = CSEnv CSEMap          -- ^ Expression mapping
+                   InScopeSet      -- ^ Variables that are in scope, to detect shadowing
+                   (IdEnv Id)      -- ^ Variable substitutions to apply
 
 -- | This is the reverse mapping: it maps the hash-code of an expression e to 
 -- a list of (e, e') pairs. The presence of this mapping means that it's good to 
@@ -261,10 +261,10 @@ data CSEnv = CS CSEMap          -- ^ Expression mapping
 type CSEMap = UniqFM [(CoreExpr, CoreExpr)]
 
 emptyCSEnv :: CSEnv
-emptyCSEnv = CS emptyUFM emptyInScopeSet emptyVarEnv
+emptyCSEnv = CSEnv emptyUFM emptyInScopeSet emptyVarEnv
 
 lookupCSEnv :: CSEnv -> CoreExpr -> Maybe CoreExpr
-lookupCSEnv (CS cs _ _) expr = do
+lookupCSEnv (CSEnv cs _ _) expr = do
     pairs <- lookupUFM cs (hashExpr expr)
     lookup_list pairs
   where
@@ -280,23 +280,23 @@ addCSEnvItem env expr expr' | exprIsBig expr || exprIsCheap expr = env
   where
     -- The use of hashExpr here is safe because we check expressions using cheapEqExpr when doing the lookup
     extendCSEnv :: CSEnv -> CoreExpr -> CoreExpr -> CSEnv
-    extendCSEnv (CS cs in_scope sub) expr expr' = let cs' = addToUFM_C (++) cs (hashExpr expr) [(expr, expr')]
-                                                  in CS cs' in_scope sub
+    extendCSEnv (CSEnv cs in_scope sub) expr expr' = let cs' = addToUFM_C (++) cs (hashExpr expr) [(expr, expr')]
+                                                  in CSEnv cs' in_scope sub
 
 lookupCSEnvIdSubst :: CSEnv -> Id -> Id
-lookupCSEnvIdSubst (CS _ _ sub) x = lookupWithDefaultVarEnv sub x x
+lookupCSEnvIdSubst (CSEnv _ _ sub) x = lookupWithDefaultVarEnv sub x x
 
 extendCSEnvIdSubst :: CSEnv -> Id -> Id -> CSEnv
-extendCSEnvIdSubst (CS cs in_scope sub) x y = CS cs in_scope (extendVarEnv sub x y)
+extendCSEnvIdSubst (CSEnv cs in_scope sub) x y = CSEnv cs in_scope (extendVarEnv sub x y)
 
 -- | Register a binder with the CSE environment, which returns the new environment (with suitably modified in-scope
 -- set and substitutions) as well as a binder to use in place of the one input from now on
 addBinder :: CSEnv -> Id -> (CSEnv, Id)
-addBinder (CS cs in_scope sub) v
-  | not (v `elemInScopeSet` in_scope)    = (CS cs (extendInScopeSet in_scope v)  sub,                     v )
-  | isId v, let v' = uniqAway in_scope v = (CS cs (extendInScopeSet in_scope v') (extendVarEnv sub v v'), v')
+addBinder (CSEnv cs in_scope sub) v
+  | not (v `elemInScopeSet` in_scope)    = (CSEnv cs (extendInScopeSet in_scope v)  sub,                     v )
+  | isId v, let v' = uniqAway in_scope v = (CSEnv cs (extendInScopeSet in_scope v') (extendVarEnv sub v v'), v')
         -- Resolve Id shadowing by generating an Id with a new unique to use from this point on
-  | otherwise                            = (CS emptyUFM in_scope                 sub,                     v )
+  | otherwise                            = (CSEnv emptyUFM in_scope                 sub,                     v )
         -- This last case is the unusual situation where we have shadowing of a type variable;
         -- we have to discard the CSE mapping. See "IMPORTANT NOTE" at the top
 
