@@ -1,0 +1,28 @@
+Name:           cse-ghc-plugin
+Version:        0.1
+License:        BSD3
+License-File:   LICENSE
+Synopsis:       A conversion of the GHC Common Subexpression Elimination pass to a plugin.
+Description:    This library is a conversion of GHC's internal Common Subexpression Elimination pass for Core to a compiler plugin.
+Cabal-Version:  >= 1.10
+Build-Type:     Simple
+Author:         The GHC Team, Max Bolingbroke <batterseapower@hotmail.com>
+Maintainer:     Austin Seipp <as@hacks.yi.org>
+Homepage:       http://github.com/thoughtpolice/cse-ghc-plugin
+Bug-reports:    https://github.com/thoughtpolice/cse-ghc-plugin/issues
+
+source-repository head
+  type: git
+  location: https://github.com/thoughtpolice/cse-ghc-plugin.git
+
+Library
+    Build-Depends:
+        base,
+        template-haskell,
+        ghc-prim,
+        ghc >= 7.2
+    Exposed-Modules:
+        CSE.Plugin
+    Other-Modules:
+        CSE.Pass
+    default-language: Haskell98
