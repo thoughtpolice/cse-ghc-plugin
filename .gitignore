@@ -2,7 +2,7 @@ _darcs
 *.o
 *.hi
 *~
-dist
+dist*
 tests/*.o
 tests/*.hi
 tests/Traced

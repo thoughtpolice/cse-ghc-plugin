@@ -1,28 +1,40 @@
-Name:           cse-ghc-plugin
-Version:        0.1
-License:        BSD3
-License-File:   LICENSE
-Synopsis:       A conversion of the GHC Common Subexpression Elimination pass to a plugin.
-Description:    This library is a conversion of GHC's internal Common Subexpression Elimination pass for Core to a compiler plugin.
-Cabal-Version:  >= 1.10
-Build-Type:     Simple
-Author:         The GHC Team, Max Bolingbroke <batterseapower@hotmail.com>
-Maintainer:     Austin Seipp <as@hacks.yi.org>
-Homepage:       http://github.com/thoughtpolice/cse-ghc-plugin
-Bug-reports:    https://github.com/thoughtpolice/cse-ghc-plugin/issues
+name:                cse-ghc-plugin
+version:             0.0
+synopsis:            Compiler plugin for common subexpression elimination
+description:
+  This library is a conversion of GHC's internal Common Subexpression
+  Elimination pass for Core to a compiler plugin. See the included test
+  for an example of how to enable it.
+homepage:            http://thoughtpolice.github.com/cse-ghc-plugin
+bug-reports:         http://github.com/thoughtpolice/cse-ghc-plugin/issues
+license:             BSD3
+license-file:        LICENSE.txt
+copyright:           Copyright (c) the GHC authors
+author:              The GHC authors
+maintainer:          Austin Seipp <mad.one@gmail.com>
+category:            Compiler Plugin
+build-type:          Simple
+cabal-version:       >=1.10
+tested-with:         GHC == 7.4.1
+
+extra-source-files:
+  AUTHORS.txt README.md
+  tests/*.hs tests/Makefile
 
 source-repository head
   type: git
   location: https://github.com/thoughtpolice/cse-ghc-plugin.git
 
-Library
-    Build-Depends:
-        base,
-        template-haskell,
-        ghc-prim,
-        ghc >= 7.2
-    Exposed-Modules:
-        CSE.Plugin
-    Other-Modules:
-        CSE.Pass
-    default-language: Haskell98
+library
+  exposed-modules:
+    CSE.Plugin
+  other-modules:
+    CSE.Pass
+  build-depends:
+    base         >= 4,
+    ghc          >= 7.4
+
+  ghc-options:        -Wall -O2 -funbox-strict-fields
+                      -fwarn-tabs
+  default-extensions: CPP
+  default-language:   Haskell2010

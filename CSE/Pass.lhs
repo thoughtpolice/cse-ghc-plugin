@@ -20,8 +20,7 @@ module CSE.Pass ( cseProgram ) where
 --import CSE.Utilities
 
 import GhcPlugins hiding (CS)
-import Data.List        ( mapAccumL, find )
-import StaticFlags  ( opt_PprStyle_Debug )
+import Data.List        ( mapAccumL )
 \end{code}
 
 
@@ -332,9 +331,6 @@ extendCSEnv (CS cs sub) expr expr'
     combine old new = result
      where
         result = new ++ old
-        short_msg = ptext (sLit "extendCSEnv: long list, length") <+> int (length result)
-        long_msg | opt_PprStyle_Debug = (text "hash code" <+> text (show hash)) $$ ppr result 
-                 | otherwise          = empty
 
 lookupSubst :: CSEnv -> Id -> OutExpr
 lookupSubst (CS _ sub) x = lookupIdSubst (text "CSE.lookupSubst") sub x
