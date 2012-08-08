@@ -1,6 +1,9 @@
-module CSE.Plugin where
+module CSE.Plugin
+       ( plugin -- :: Plugin
+       ) where
+
+import CSE.Pass (cseProgram)
 import GhcPlugins
-import CSE.Pass ( cseProgram )
 
 plugin :: Plugin
 plugin = defaultPlugin {
@@ -9,5 +12,7 @@ plugin = defaultPlugin {
 
 -- You should probably run this with -fno-cse !
 install :: [CommandLineOption] -> [CoreToDo] -> CoreM [CoreToDo]
-install _ xs = return $ CoreDoPasses [cse] : xs
+install _ todos = do
+    reinitializeGlobals
+    return $ CoreDoPasses [cse] : todos
   where cse = CoreDoPluginPass "Common Subexpression Elimination" (bindsOnlyPass cseProgram)
