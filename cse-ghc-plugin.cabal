@@ -1,5 +1,5 @@
 name:                cse-ghc-plugin
-version:             0.1
+version:             0.1.1
 synopsis:            Compiler plugin for common subexpression elimination
 description:
   This library is a conversion of GHC's internal Common Subexpression
@@ -31,8 +31,8 @@ library
   other-modules:
     CSE.Pass
   build-depends:
-    base         >= 4,
-    ghc          >= 7.4
+    base < 5,
+    ghc >= 7.4
 
   ghc-options:        -Wall -O2 -funbox-strict-fields
                       -fwarn-tabs
