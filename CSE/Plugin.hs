@@ -9,5 +9,5 @@ plugin = defaultPlugin {
 
 -- You should probably run this with -fno-cse !
 install :: [CommandLineOption] -> [CoreToDo] -> CoreM [CoreToDo]
-install _ xs = return $ CoreDoPasses [defaultGentleSimplToDo, cse] : xs
+install _ xs = return $ CoreDoPasses [cse] : xs
   where cse = CoreDoPluginPass "Common Subexpression Elimination" (bindsOnlyPass cseProgram)
